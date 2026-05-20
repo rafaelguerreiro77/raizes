@@ -1,6 +1,10 @@
 from pydantic import BaseModel, EmailStr
 
 
+class Message(BaseModel):
+    message: str
+
+
 class Usuario(BaseModel):
     nome: str
     endereco: str
@@ -19,3 +23,7 @@ class UsuarioPublico(BaseModel):
 
 class UsuarioDB(Usuario):
     id: int
+
+
+class Usuariolista(BaseModel):
+    usuarios: list[UsuarioPublico]
