@@ -68,4 +68,56 @@ def test_put_usuario(client):
 def test_delete_usuario(client):
     response = client.delete('/usuarios/1')
     assert response.status_code == HTTPStatus.OK
-    assert response.json() == {'message': 'Usuario excluido com sucesso'}
+    assert response.json() == {'message': 'Usuário excluido com sucesso'}
+
+
+def test_create_pedido(client):
+    response = client.post(
+        '/pedidos',
+        json={
+            'usuario_id': 1,
+            'unidade_id': 1,
+            'status': 'Aguardando pagamento',
+            'canal_pedido': 'App',
+            'valor_pedido': 10.05,
+            'data_pedido': '2020-01-01T00:00:00',
+        },
+    )
+    assert response.status_code == HTTPStatus.CREATED
+    assert response.json() == {
+        'usuario_id': 1,
+        'unidade_id': 1,
+        'status': 'Aguardando pagamento',
+        'canal_pedido': 'App',
+        'valor_pedido': '10.05',
+        'data_pedido': '2020-01-01T00:00:00',
+        'id': 1,
+    }
+
+
+def test_get_pedido(client):
+    response = client.get('/pedidos/')
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'pedidos': [
+            {
+                'usuario_id': 1,
+                'unidade_id': 1,
+                'status': 'Aguardando pagamento',
+                'canal_pedido': 'App',
+                'valor_pedido': '10.05',
+                'data_pedido': '2020-01-01T00:00:00',
+                'id': 1,
+            }
+        ]
+    }
+
+
+def test_get_pedido_id(client):
+    response = client.get('/pedidos/1')
+    assert response.status_code == HTTPStatus.OK
+
+
+def test_get_pedido_id_not_found(client):
+    response = client.get('/pedidos/9999')
+    assert response.status_code == HTTPStatus.NOT_FOUND
