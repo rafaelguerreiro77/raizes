@@ -2,22 +2,62 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import StaticPool
 
 from raizes.app import app
-from raizes.models import table_registry
+from raizes.database import get_session
+from raizes.models import Produto, Usuario, table_registry
 
 
 @pytest.fixture
-def client():
-    return TestClient(app)
+def client(session):
+    def get_session_override():
+        return session
+
+    with TestClient(app) as client:
+        app.dependency_overrides[get_session] = get_session_override
+        yield client
+    app.dependency_overrides.clear()
 
 
 @pytest.fixture
 def session():
-    engine = create_engine('sqlite:///:memory:')
+    engine = create_engine(
+        'sqlite:///:memory:',
+        connect_args={'check_same_thread': False},
+        poolclass=StaticPool,
+    )
     table_registry.metadata.create_all(engine)
 
     with Session(engine) as session:
         yield session
 
     table_registry.metadata.drop_all(engine)
+
+
+@pytest.fixture
+def usuario(session):
+    usuario = Usuario(
+        nome='Rafael',
+        email='teste@raizes.com',
+        endereco='teste',
+        senha='12345',
+        perfil='teste',
+    )
+    session.add(usuario)
+    session.commit()
+    session.refresh(usuario)
+    return usuario
+
+
+@pytest.fixture
+def produto(session):
+    produto = Produto(
+        nome='Lanche',
+        descricao='Pão Hamburguer, Carne, Queijo e alface',
+        preco_unitario=10.05,
+    )
+    session.add(produto)
+    session.commit()
+    session.refresh(produto)
+    return produto

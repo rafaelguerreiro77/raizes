@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from raizes.models import Pedido, Usuario
+from raizes.models import ItemPedido, Pagamento, Pedido, Usuario
 
 
 def test_create_usuario(session):
@@ -30,3 +30,32 @@ def test_create_pedido(session):
     session.commit()
     pedido = session.scalar(select(Pedido).where(Pedido.pedido_id == 1))
     assert pedido.pedido_id == 1
+
+
+def test_create_pagamento(session):
+    new_pagamento = Pagamento(
+        pedido_id=1,
+        status='aprovado',
+        metodo='cartão',
+    )
+    session.add(new_pagamento)
+    session.commit()
+    pagamento = session.scalar(
+        select(Pagamento).where(Pagamento.pedido_id == 1)
+    )
+    assert pagamento.pedido_id == 1
+
+
+def test_create_item_pedido(session):
+    new_item_pedido = ItemPedido(
+        pedido_id=1,
+        produto_id=1,
+        quantidade=10,
+        preco_unitario=10.50,
+    )
+    session.add(new_item_pedido)
+    session.commit()
+    item_pedido = session.scalar(
+        select(ItemPedido).where(ItemPedido.pedido_id == 1)
+    )
+    assert item_pedido.pedido_id == 1

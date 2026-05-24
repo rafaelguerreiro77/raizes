@@ -1,14 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class Message(BaseModel):
     message: str
 
 
-class Usuario(BaseModel):
+class UsuarioSchema(BaseModel):
     nome: str
     endereco: str
     email: EmailStr
@@ -17,22 +17,19 @@ class Usuario(BaseModel):
 
 
 class UsuarioPublico(BaseModel):
-    id: int
+    usuario_id: int
     nome: str
     endereco: str
     email: EmailStr
     perfil: str
-
-
-class UsuarioDB(Usuario):
-    id: int
+    model_config = ConfigDict(from_attributes=True)
 
 
 class Usuariolista(BaseModel):
     usuarios: list[UsuarioPublico]
 
 
-class Pedido(BaseModel):
+class PedidoSchema(BaseModel):
     usuario_id: int
     unidade_id: int
     status: str
@@ -42,18 +39,71 @@ class Pedido(BaseModel):
 
 
 class PedidoPublico(BaseModel):
-    id: int
+    pedido_id: int
     usuario_id: int
     unidade_id: int
     status: str
     canal_pedido: str
     valor_pedido: Decimal
-    data_pedido: datetime
-
-
-class PedidoDB(Pedido):
-    id: int
+    data_pedido: datetime | None = None
+    model_config = ConfigDict(from_attributes=True)
 
 
 class PedidoLista(BaseModel):
     pedidos: list[PedidoPublico]
+
+
+class ProdutoSchema(BaseModel):
+    nome: str
+    descricao: str
+    preco_unitario: Decimal
+
+
+class ProdutoPublico(BaseModel):
+    produto_id: int
+    nome: str
+    descricao: str
+    preco_unitario: Decimal
+
+
+class ProdutoDB(ProdutoSchema):
+    produto_id: int
+
+
+class ProdutoLista(BaseModel):
+    produtos: list[ProdutoPublico]
+
+
+class ItemPedidoSchema(BaseModel):
+    pedido_id: int
+    produto_id: int
+    quantidade: int
+    preco_unitario: Decimal
+
+
+class ItemPedidoPublico(BaseModel):
+    pedido_id: int
+    produto_id: int
+    quantidade: int
+    preco_unitario: Decimal
+
+
+class ItemPedidoLista(BaseModel):
+    itens: list[ItemPedidoPublico]
+
+
+class PagamentoSchema(BaseModel):
+    pedido_id: int
+    status: str
+    metodo: str
+
+
+class PagamentoPublico(BaseModel):
+    pedido_id: int
+    status: str
+    metodo: str
+    data_pagamento: datetime
+
+
+class PagamentoLista(BaseModel):
+    pagamentos: list[PagamentoPublico]
