@@ -7,6 +7,7 @@ from sqlalchemy.pool import StaticPool
 from raizes.app import app
 from raizes.database import get_session
 from raizes.models import Produto, Usuario, table_registry
+from raizes.security import get_senha_hash
 
 
 @pytest.fixture
@@ -33,20 +34,25 @@ def session():
         yield session
 
     table_registry.metadata.drop_all(engine)
+    engine.dispose()
 
 
 @pytest.fixture
 def usuario(session):
+    senha = '12345678'
     usuario = Usuario(
         nome='Rafael',
         email='teste@raizes.com',
         endereco='teste',
-        senha='12345',
+        senha=get_senha_hash('12345678'),
         perfil='teste',
     )
     session.add(usuario)
     session.commit()
     session.refresh(usuario)
+
+    usuario.reseta_senha = senha
+
     return usuario
 
 
@@ -61,3 +67,12 @@ def produto(session):
     session.commit()
     session.refresh(produto)
     return produto
+
+
+@pytest.fixture
+def token(client, usuario):
+    response = client.post(
+        '/auth/token/',
+        data={'username': usuario.email, 'password': usuario.reseta_senha},
+    )
+    return response.json()['acesso_token']

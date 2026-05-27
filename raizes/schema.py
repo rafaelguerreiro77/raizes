@@ -107,3 +107,8 @@ class PagamentoPublico(BaseModel):
 
 class PagamentoLista(BaseModel):
     pagamentos: list[PagamentoPublico]
+
+
+class Token(BaseModel):
+    acesso_token: str
+    tipo_token: str
