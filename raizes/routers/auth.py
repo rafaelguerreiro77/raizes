@@ -33,4 +33,4 @@ def login_acesso_token(
         )
 
     acesso_token = create_acesso_token(data={'sub': usuario.email})
-    return {'acesso_token': acesso_token, 'tipo_token': 'bearer'}
+    return {'access_token': acesso_token, 'token_type': 'bearer'}

@@ -9,5 +9,5 @@ def test_post_token(client, usuario):
     token = response.json()
 
     assert response.status_code == HTTPStatus.OK
-    assert 'acesso_token' in token
-    assert 'tipo_token' in token
+    assert 'access_token' in token
+    assert 'token_type' in token

@@ -110,5 +110,5 @@ class PagamentoLista(BaseModel):
 
 
 class Token(BaseModel):
-    acesso_token: str
-    tipo_token: str
+    access_token: str
+    token_type: str

@@ -75,4 +75,4 @@ def token(client, usuario):
         '/auth/token/',
         data={'username': usuario.email, 'password': usuario.reseta_senha},
     )
-    return response.json()['acesso_token']
+    return response.json()['access_token']
