@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -43,17 +43,22 @@ def get_produto(
     return {'produtos': produtos}
 
 
-@router.get('/{produto_id}', response_model=ProdutoPublico)
-def get_produtos(produto_id: int, session: Session = Depends(get_session)):
-    produto = session.get(Produto, produto_id)
-
-    if not produto:
+@router.get('/busca', response_model=ProdutoLista)
+def pesquisar_produtos(
+    session: Session = Depends(get_session),
+    termo: str = Query(..., description='Buscar por id ou nome'),
+):
+    query = select(Produto)
+    if termo.isdigit():
+        query = query.where(Produto.produto_id == int(termo))
+    else:
+        query = query.where(Produto.nome.ilike(f'%{termo}%'))
+    produtos = session.scalars(query).all()
+    if not produtos:
         raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND,
-            detail='Produto não encontrado',
+            status_code=HTTPStatus.NOT_FOUND, detail='Produto não encontrado'
         )
-
-    return produto
+    return {'produtos': produtos}
 
 
 @router.put('/{produto_id}', response_model=ProdutoPublico)

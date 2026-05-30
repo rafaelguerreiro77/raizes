@@ -25,7 +25,7 @@ def test_get_produto(client):
     assert response.json() == {'produtos': []}
 
 
-def test_get_produto_id(client):
+def test_get_produto_busca(client):
     client.post(
         '/produtos/',
         json={
@@ -34,27 +34,27 @@ def test_get_produto_id(client):
             'preco_unitario': 10.05,
         },
     )
-    response = client.get('/produtos/1')
+
+    response = client.get('/produtos/busca?termo=1')
+
     assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'produto_id': 1,
-        'nome': 'Lanche',
-        'descricao': 'Pão Hamburguer, Carne, Queijo e alface',
-        'preco_unitario': '10.05',
+        'produtos': [
+            {
+                'produto_id': 1,
+                'nome': 'Lanche',
+                'descricao': 'Pão Hamburguer, Carne, Queijo e alface',
+                'preco_unitario': '10.05',
+            }
+        ]
     }
 
 
-def test_get_produtos_id_not_found(client):
-    client.post(
-        '/produtos',
-        json={
-            'nome': 'Lanche',
-            'descricao': 'Pão Hamburguer, Carne, Queijo e alface',
-            'preco_unitario': 10.05,
-        },
-    )
-    response = client.get('/produtos/99999999')
+def test_get_produtos_busca_not_found(client):
+    response = client.get('/produtos/busca?termo=naoexiste')
+
     assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json() == {'detail': 'Produto não encontrado'}
 
 
 def test_put_produto(client):

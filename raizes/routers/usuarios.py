@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -84,6 +84,31 @@ def put_usuario(
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT, detail='Nome de usuário já existe'
         )
+
+
+@router.get('/busca', response_model=Usuariolista)
+def pesquisar_usuario(
+    termo: str = Query(..., description='Buscar por id, nome ou email'),
+    session: Session = Depends(get_session),
+):
+    query = select(Usuario)
+
+    if termo.isdigit():
+        query = query.where(Usuario.usuario_id == int(termo))
+    else:
+        query = query.where(
+            or_(
+                Usuario.nome.ilike(f'%{termo}%'),
+                Usuario.email.ilike(f'%{termo}%'),
+            )
+        )
+
+    usuarios = session.scalars(query).all()
+    if not usuarios:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Usuário não encontrado'
+        )
+    return {'usuarios': usuarios}
 
 
 @router.delete('/{usuario_id}', response_model=Message)

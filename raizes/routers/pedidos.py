@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -50,3 +50,20 @@ def get_pedido(
         )
 
     return pedido
+
+
+@router.get('/busca', response_model=PedidoLista)
+def pesquisar_pedidos(
+    canal_pedido: str = Query(..., description='Buscar pedidos por canal'),
+    session: Session = Depends(get_session),
+):
+    pedidos = session.scalars(
+        select(Pedido).where(Pedido.canal_pedido.ilike(f'%{canal_pedido}%'))
+    ).all()
+
+    if not pedidos:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Nenhum pedido encontrado'
+        )
+
+    return {'pedidos': pedidos}
