@@ -66,10 +66,6 @@ class ProdutoPublico(BaseModel):
     preco_unitario: Decimal
 
 
-class ProdutoDB(ProdutoSchema):
-    produto_id: int
-
-
 class ProdutoLista(BaseModel):
     produtos: list[ProdutoPublico]
 
@@ -103,10 +99,6 @@ class PagamentoPublico(BaseModel):
     status: str
     metodo: str
     data_pagamento: datetime
-
-
-class PagamentoLista(BaseModel):
-    pagamentos: list[PagamentoPublico]
 
 
 class Token(BaseModel):

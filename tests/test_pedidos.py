@@ -61,3 +61,25 @@ def test_get_pedido_pedido_id(client):
 def test_get_pedido_id_not_found(client):
     response = client.get('/pedidos/999999999')
     assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_delete_pedido(client):
+    response_create = client.post(
+        '/pedidos/',
+        json={
+            'usuario_id': 1,
+            'unidade_id': 1,
+            'status': 'pendente',
+            'canal_pedido': 'app',
+            'valor_pedido': 10,
+            'data_pedido': '2026-01-01T00:00:00',
+        },
+    )
+
+    assert response_create.status_code == HTTPStatus.CREATED
+
+    pedido = response_create.json()
+
+    response = client.delete(f'/pedidos/{pedido["pedido_id"]}')
+
+    assert response.status_code == HTTPStatus.OK

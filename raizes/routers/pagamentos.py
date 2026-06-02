@@ -1,4 +1,3 @@
-from datetime import datetime
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -14,7 +13,6 @@ router = APIRouter(
 )
 
 
-# Endpoint real do pagamento
 @router.post(
     '/',
     status_code=HTTPStatus.CREATED,
@@ -24,29 +22,26 @@ def create_pagamento(
     pagamento: PagamentoSchema, session: Session = Depends(get_session)
 ):
     pedido = session.get(Pedido, pagamento.pedido_id)
+
     if not pedido:
         raise HTTPException(404, 'Pedido não encontrado')
+
     db_pagamento = session.get(Pagamento, pagamento.pedido_id)
+
     if db_pagamento:
         raise HTTPException(409, 'Pagamento já existe para este pedido')
+
     db_pagamento = Pagamento(**pagamento.model_dump())
+
+    status = pagamento.status.lower()
+
+    if status in {'pago', 'aprovado'}:
+        pedido.status = 'pago'
+    elif status in {'recusado', 'negado'}:
+        pedido.status = 'cancelado'
+
     session.add(db_pagamento)
     session.commit()
     session.refresh(db_pagamento)
+
     return db_pagamento
-
-
-# Endpoint mock para simulação de pagamento,
-# sem banco de dados e validação externa
-@router.post(
-    '/mock',
-    status_code=HTTPStatus.CREATED,
-    response_model=PagamentoPublico,
-)
-def create_pagamento_mock(pagamento: PagamentoSchema):
-    return {
-        'pedido_id': pagamento.pedido_id,
-        'status': 'Pago',
-        'metodo': pagamento.metodo,
-        'data_pagamento': datetime.now(),
-    }

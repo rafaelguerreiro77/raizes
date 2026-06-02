@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from raizes.database import get_session
 from raizes.models import Pedido
-from raizes.schema import PedidoLista, PedidoPublico, PedidoSchema
+from raizes.schema import Message, PedidoLista, PedidoPublico, PedidoSchema
 
 router = APIRouter(
     prefix='/pedidos',
@@ -67,3 +67,16 @@ def pesquisar_pedidos(
         )
 
     return {'pedidos': pedidos}
+
+
+@router.delete('/{pedido_id}', response_model=Message)
+def delete_pedido(pedido_id: int, session: Session = Depends(get_session)):
+    db_pedido = session.query(Pedido).get(pedido_id)
+    if not db_pedido:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Pedido não encontrado'
+        )
+
+    session.delete(db_pedido)
+    session.commit()
+    return {'message': 'Pedido excluído com sucesso'}
