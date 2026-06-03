@@ -1,0 +1,313 @@
+{
+  "info": {
+    "_postman_id": "4717aef2-deb2-460c-8cf8-cf558884326f",
+    "name": "Raizes API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55442520",
+    "_collection_link": "https://go.postman.co/collection/55442520-4717aef2-deb2-460c-8cf8-cf558884326f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Criar Usuário",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nome\": \"Rafael\",\r\n  \"endereco\": \"Dois Córregos SP\",\r\n  \"email\": \"rafael@raizes.com\",\r\n  \"senha\": \"123456\",\r\n  \"perfil\": \"adm\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/usuarios/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "usuarios",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criar Usuário (erro email ja existe)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nome\": \"Guerreiro\",\r\n  \"endereco\": \"Dois Córregos\",\r\n  \"email\": \"rafael@raizes.com\",\r\n  \"senha\": \"123456\",\r\n  \"perfil\": \"cliente\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/usuarios/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "usuarios",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "login Usuário",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "username",
+              "value": "rafael@raizes.com",
+              "type": "text",
+              "uuid": "4a833448-b5b6-436f-9cff-a58f92e31467"
+            },
+            {
+              "key": "password",
+              "value": "123456",
+              "type": "text",
+              "uuid": "357e9bf6-e9bd-4d98-adb7-3172386cd903"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8000/auth/token/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "auth",
+            "token",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criar Pedido",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"usuario_id\": 1,\r\n  \"unidade_id\": 1,\r\n  \"status\": \"pendente\",\r\n  \"canal_pedido\": \"app\",\r\n  \"valor_pedido\": 10,\r\n  \"data_pedido\": \"2026-06-02T22:02:49.553Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/pedidos/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criar pagamento (erro pedido não encontrado)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"pedido_id\": 2,\r\n  \"status\": \"pago\",\r\n  \"metodo\": \"mock\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/pagamentos/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "pagamentos",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criar pagamento",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"pedido_id\": 1,\r\n  \"status\": \"pago\",\r\n  \"metodo\": \"mock\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/pagamentos/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "pagamentos",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get pedidos com status pago",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/pedidos/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete pedidos",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/pedidos/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "pedidos",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criar Produtos",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nome\": \"Lanche\",\r\n  \"descricao\": \"Pao, carne e queijo\",\r\n  \"preco_unitario\": 20\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/produtos/",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "produtos",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put Produtos",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nome\": \"Pastel\",\r\n  \"descricao\": \"carne\",\r\n  \"preco_unitario\": 10\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/produtos/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "produtos",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
