@@ -37,21 +37,6 @@ def get_pedidos(
     return {'pedidos': pedidos}
 
 
-@router.get('/{pedido_id}', response_model=PedidoPublico)
-def get_pedido(
-    pedido_id: int,
-    session: Session = Depends(get_session),
-):
-    pedido = session.get(Pedido, pedido_id)
-
-    if not pedido:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Pedido não encontrado'
-        )
-
-    return pedido
-
-
 @router.get('/busca', response_model=PedidoLista)
 def pesquisar_pedidos(
     canal_pedido: str = Query(..., description='Buscar pedidos por canal'),
@@ -67,6 +52,21 @@ def pesquisar_pedidos(
         )
 
     return {'pedidos': pedidos}
+
+
+@router.get('/{pedido_id}', response_model=PedidoPublico)
+def get_pedido(
+    pedido_id: int,
+    session: Session = Depends(get_session),
+):
+    pedido = session.get(Pedido, pedido_id)
+
+    if not pedido:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Pedido não encontrado'
+        )
+
+    return pedido
 
 
 @router.delete('/{pedido_id}', response_model=Message)
